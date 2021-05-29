@@ -46,6 +46,9 @@ namespace ShoppingCart.API
 
             services.AddScoped<IProductService, ProductService>();
 
+            services.AddSession();
+
+            services.AddHttpContextAccessor();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -69,6 +72,8 @@ namespace ShoppingCart.API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
