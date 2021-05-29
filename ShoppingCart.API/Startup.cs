@@ -41,16 +41,16 @@ namespace ShoppingCart.API
 
             services.AddScoped(typeof(IRepository<>), typeof(MongoRepositoryBase<>));
             services.AddScoped<IProductRepository, ProductRepository>();
-
-            services.AddControllers();
-
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICartService, CartService>();
 
-            services.AddSession();
-
+            services.AddDistributedMemoryCache();
+            services.AddSession(); 
             services.AddHttpContextAccessor();
 
             services.AddControllers();
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ShoppingCart.API", Version = "v1" });
@@ -66,6 +66,8 @@ namespace ShoppingCart.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShoppingCart.API v1"));
             }
+            app.UseSession();
+
 
             app.UseHttpsRedirection();
 
@@ -73,7 +75,6 @@ namespace ShoppingCart.API
 
             app.UseAuthorization();
 
-            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

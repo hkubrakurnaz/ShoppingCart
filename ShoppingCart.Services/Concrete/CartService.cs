@@ -28,23 +28,31 @@ namespace ShoppingCart.Services.Concrete
 
             if (sessionCart == null)
             {
+                sessionCart = new List<Item>();
                 sessionCart.Add(new Item { Product = product, Quantity = 1 });
                 SessionHelper.SetObject(_httpContextAccessor.HttpContext.Session, "cart", sessionCart  );
             }
             else
             {
-                foreach(var i in sessionCart)
-                {
-                    if(i.Product.Id == id)
-                        i.Quantity += 1;
-                    else
-                        sessionCart.Add(new Item { Product = product, Quantity = 1 });
-                }
-               
+                int index = sessionCart.FindIndex(x => x.Product.Id.Contains(id));
+
+                if (index == -1)
+                    sessionCart.Add(new Item { Product = product, Quantity = 1 });
+                else
+                    sessionCart[index].Quantity += 1;
+
                 SessionHelper.SetObject(_httpContextAccessor.HttpContext.Session, "cart", sessionCart);
+
             }
 
             return product;
         }
+        public Task<List<Item>> GetItems()
+        {
+            return Task.FromResult(SessionHelper.GetObject<List<Item>>(_httpContextAccessor.HttpContext.Session, "cart"));
+        }
+
+
+
     }
 }
