@@ -21,17 +21,23 @@ namespace ShoppingCart.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Product>> InsertItem(string id)
+        public async Task<ActionResult> InsertItem(string id)
         {
             var result =  await _cartService.InsertItem(id);
-            return result;
+
+            if (result == null)
+                return NotFound();
+            return Ok(result);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Item>>> GetItems()
+        public async Task<ActionResult> GetItems()
         {
             var result = await _cartService.GetItems();
-            return result;
+
+            if(result == null)
+                return NotFound();
+            return Ok(result);
         }
     }
 }
