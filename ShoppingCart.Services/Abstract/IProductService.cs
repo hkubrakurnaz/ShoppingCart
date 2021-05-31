@@ -1,4 +1,5 @@
 ﻿
+using ShoppingCart.Core.Models;
 using ShoppingCart.Entities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,6 @@ namespace ShoppingCart.Services.Abstract
     public interface IProductService 
     {
         Task<List<Product>> GetAllAsync();
-        Task<Product> GetByIdAsync(string id, string type = "object");
+        Task<Product> GetByIdAsync(string id);
     }
 }

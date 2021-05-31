@@ -26,7 +26,8 @@ namespace ShoppingCart.API.Controllers
             var result =  await _cartService.InsertItem(id);
 
             if (result == null)
-                return NotFound();
+                return NotFound(id);
+
             return Ok(result);
         }
 
@@ -37,6 +38,7 @@ namespace ShoppingCart.API.Controllers
 
             if(result == null)
                 return NotFound();
+
             return Ok(result);
         }
     }

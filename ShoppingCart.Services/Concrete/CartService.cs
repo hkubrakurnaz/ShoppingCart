@@ -24,6 +24,10 @@ namespace ShoppingCart.Services.Concrete
         public async Task<Product> InsertItem(string id)
         {
             var product = await _productService.GetByIdAsync(id);
+
+            if(product == null)
+                return null;
+
             var sessionCart = SessionHelper.GetObject<List<Item>>(_httpContextAccessor.HttpContext.Session, "cart");
 
             if (sessionCart == null)
@@ -42,7 +46,6 @@ namespace ShoppingCart.Services.Concrete
                     sessionCart[index].Quantity += 1;
 
                 SessionHelper.SetObject(_httpContextAccessor.HttpContext.Session, "cart", sessionCart);
-
             }
 
             return product;

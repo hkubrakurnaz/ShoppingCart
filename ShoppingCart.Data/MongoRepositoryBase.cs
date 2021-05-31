@@ -30,7 +30,7 @@ namespace ShoppingCart.Data
             //    result.Result = data;
         }
 
-        public async Task<TEntity> GetByIdAsync(string id, string type = "object")
+        public async Task<TEntity> GetByIdAsync(string id)
         {
             return  await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
         }

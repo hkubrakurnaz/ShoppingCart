@@ -1,4 +1,5 @@
 ﻿
+using ShoppingCart.Core.Models;
 using ShoppingCart.Data.Abstract;
 using ShoppingCart.Entities.Concrete;
 using ShoppingCart.Services.Abstract;
@@ -25,15 +26,9 @@ namespace ShoppingCart.Services.Concrete
             return products;
         }
 
-        public async Task<Product> GetByIdAsync(string id, string type = "object")
+        public async Task<Product> GetByIdAsync(string id)
         {
-            var result = await _productRepository.GetByIdAsync(id, "guid");
-
-            //if(result != null)
-            //{
-
-            //}
-            return result;
+            return  await _productRepository.GetByIdAsync(id);
         }
     }
 }

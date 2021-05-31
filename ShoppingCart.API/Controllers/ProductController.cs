@@ -19,23 +19,26 @@ namespace ShoppingCart.API.Controllers
         {
             _productService = productService;
         }
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProductById(string id)
-        {
-            var result = await _productService.GetByIdAsync(id);
-
-            if (result == null)
-                return NotFound();
-            return Ok(result);
-        }
 
         [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetAllProducts()
+        [ProducesResponseType(typeof(List<Product>), 200)]
+        public async Task<IActionResult> GetAllProducts()
         {
             var result = await _productService.GetAllAsync();
             if (result == null)
                 return NotFound();
             return Ok(result);
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetProductById(string id)
+        {
+            var product = await _productService.GetByIdAsync(id);
+
+            if (product == null)
+                return NotFound();
+            return Ok(product);
+        }
+        
     }
 }
