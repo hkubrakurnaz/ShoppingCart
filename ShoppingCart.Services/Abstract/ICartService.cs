@@ -10,7 +10,7 @@ namespace ShoppingCart.Services.Abstract
 {
     public interface ICartService
     {
-        Task<Product> InsertItem(string id);
+        public Task<Response<Product>> InsertItem(string id);
         Task<List<Item>> GetItems();
     }
 }

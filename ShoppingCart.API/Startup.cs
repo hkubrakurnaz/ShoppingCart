@@ -41,7 +41,6 @@ namespace ShoppingCart.API
 
             services.AddScoped(typeof(IRepository<>), typeof(MongoRepositoryBase<>));
             services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICartService, CartService>();
 
             services.AddDistributedMemoryCache();

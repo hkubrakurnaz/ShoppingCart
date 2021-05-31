@@ -1,5 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Http;
+using ShoppingCart.Core.Models;
+using ShoppingCart.Data.Abstract;
 using ShoppingCart.Entities.Concrete;
 using ShoppingCart.Helpers;
 using ShoppingCart.Services.Abstract;
@@ -14,47 +16,72 @@ namespace ShoppingCart.Services.Concrete
     public class CartService : ICartService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IProductService _productService;
-        public CartService(IHttpContextAccessor httpContextAccessor, IProductService productService)
+        private readonly IProductRepository _productRepository;
+        public CartService(IHttpContextAccessor httpContextAccessor, IProductRepository productRepository)
         {
             _httpContextAccessor = httpContextAccessor;
-            _productService = productService;
+            _productRepository = productRepository;
         }
 
-        public async Task<Product> InsertItem(string id)
+        public async Task<Response<Product>> InsertItem(string id)
         {
-            var product = await _productService.GetByIdAsync(id);
+            var product = await _productRepository.GetByIdAsync(id);
 
-            if(product == null)
+            if (product == null)
                 return null;
 
-            var sessionCart = SessionHelper.GetObject<List<Item>>(_httpContextAccessor.HttpContext.Session, "cart");
-
-            if (sessionCart == null)
+            else if (product.Stock == 0)
             {
-                sessionCart = new List<Item>();
-                sessionCart.Add(new Item { Product = product, Quantity = 1 });
-                SessionHelper.SetObject(_httpContextAccessor.HttpContext.Session, "cart", sessionCart  );
+                return new Response<Product>
+                {
+                    Success = false,
+                    Message = "Out of stock."
+                };
             }
-            else
+            try
             {
-                int index = sessionCart.FindIndex(x => x.Product.Id.Contains(id));
+                var sessionCart = SessionHelper.GetObject<List<Item>>(_httpContextAccessor.HttpContext.Session, "cart");
 
-                if (index == -1)
+                if (sessionCart == null)
+                {
+                    sessionCart = new List<Item>();
                     sessionCart.Add(new Item { Product = product, Quantity = 1 });
+                    SessionHelper.SetObject(_httpContextAccessor.HttpContext.Session, "cart", sessionCart);
+                }
                 else
-                    sessionCart[index].Quantity += 1;
+                {
+                    int index = sessionCart.FindIndex(x => x.Product.Id.Contains(id));
 
-                SessionHelper.SetObject(_httpContextAccessor.HttpContext.Session, "cart", sessionCart);
+                    if (index == -1)
+                        sessionCart.Add(new Item { Product = product, Quantity = 1 });
+                    else
+                        sessionCart[index].Quantity += 1;
+
+                    SessionHelper.SetObject(_httpContextAccessor.HttpContext.Session, "cart", sessionCart);
+
+                }
+                return new Response<Product>
+                {
+                    Success = true,
+                    Message = "Product successfully added to cart.",
+                    Data = product
+                };
+
             }
-
-            return product;
+            catch (Exception ex)
+            {
+                return new Response<Product>
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+            }
+          
         }
         public Task<List<Item>> GetItems()
         {
             return Task.FromResult(SessionHelper.GetObject<List<Item>>(_httpContextAccessor.HttpContext.Session, "cart"));
         }
-
 
 
     }

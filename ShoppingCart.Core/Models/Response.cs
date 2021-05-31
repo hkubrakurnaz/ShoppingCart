@@ -8,11 +8,8 @@ namespace ShoppingCart.Core.Models
 {
     public class Response<T>
     {
-        public bool IsSuccess { get; set; }
-        public string Message { get; set; }
+        public bool Success { get; set; }
         public T Data { get; set; }
-    }
-    public class Response : Response<object>
-    {
+        public string Message { get; set; }
     }
 }
