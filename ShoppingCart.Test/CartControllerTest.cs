@@ -17,7 +17,6 @@ namespace ShoppingCart.Test
     {
         public Mock<ICartService> _cartService = new Mock<ICartService>();
 
-
         [Fact]
         public async void AddProductToCart_GivenValidId_ReturnSuccess()
         {
@@ -25,7 +24,7 @@ namespace ShoppingCart.Test
 
             var response = new Response<Product>
             {
-                Success = true,
+                IsSuccess = true,
                 Message = "Product successfully added to cart.",
                 Data = new Product
                 {
@@ -36,19 +35,17 @@ namespace ShoppingCart.Test
             };
 
             _cartService.Setup(x => x.InsertItem(id)).ReturnsAsync(response);
-            // arrange
             var controller = new CartController(_cartService.Object);
 
-            //act 
             var result = await controller.InsertItem(id);
 
-            //assert
             var actionResult = Assert.IsType<OkObjectResult>(result);
             var model = Assert.IsAssignableFrom <Response<Product>> (actionResult.Value);
 
-            Assert.True(model.Success);
+            Assert.True(model.IsSuccess);
             Assert.Equal("Product successfully added to cart.", model.Message);
             Assert.Equal(StatusCodes.Status200OK, actionResult.StatusCode);
+            Assert.Equal(response.Data, model.Data);
         }
 
         [Fact]
@@ -56,11 +53,24 @@ namespace ShoppingCart.Test
         {
             string id = "60b27814c8a1a343860387e7";
 
+            var response = new Response<Product>
+            {
+                IsSuccess = false,
+                Message = "Out of stock.",
+
+            };
+
+            _cartService.Setup(x => x.InsertItem(id)).ReturnsAsync(response);
             var controller = new CartController(_cartService.Object);
 
             var result = await controller.InsertItem(id);
 
-            Assert.IsType<NotFoundResult>(result);
+            var actionResult = Assert.IsType<BadRequestObjectResult>(result);
+            var model = Assert.IsAssignableFrom<Response<Product>>(actionResult.Value);
+
+            Assert.False(model.IsSuccess);
+            Assert.Equal("Out of stock.", model.Message);
+            Assert.Equal(StatusCodes.Status400BadRequest, actionResult.StatusCode);
 
         }
         [Fact]
@@ -71,8 +81,14 @@ namespace ShoppingCart.Test
 
             var response = new Response<Product>
             {
-                Success = false,
-                Message = "Out of stock."
+                IsSuccess = false,
+                Message = "Out of stock.",
+                Data = new Product
+                {
+                    Id = id,
+                    ProductName = "test3",
+                    Stock = 0
+                }
             };
 
             _cartService.Setup(x => x.InsertItem(id)).ReturnsAsync(response);
@@ -80,12 +96,13 @@ namespace ShoppingCart.Test
 
             var result = await controller.InsertItem(id);
 
-            var actionResult = Assert.IsType<OkObjectResult>(result);
+            var actionResult = Assert.IsType<BadRequestObjectResult>(result);
             var model = Assert.IsAssignableFrom<Response<Product>>(actionResult.Value);
 
-            Assert.False(model.Success);
+            Assert.False(model.IsSuccess);
             Assert.Equal("Out of stock.", model.Message);
-            Assert.Equal(StatusCodes.Status200OK, actionResult.StatusCode);
+            Assert.Equal(StatusCodes.Status400BadRequest, actionResult.StatusCode);
+            Assert.Equal(response.Data, model.Data);
         }
     }
 }

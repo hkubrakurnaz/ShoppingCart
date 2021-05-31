@@ -25,10 +25,7 @@ namespace ShoppingCart.API.Controllers
         {
             var response =  await _cartService.InsertItem(id);
 
-            if (response == null)
-                return NotFound();
-
-            return Ok(response);
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
 
         [HttpGet]

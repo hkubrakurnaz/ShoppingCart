@@ -28,14 +28,21 @@ namespace ShoppingCart.Services.Concrete
             var product = await _productRepository.GetByIdAsync(id);
 
             if (product == null)
-                return null;
+            {
+                return new Response<Product>
+                {
+                    IsSuccess = false,
+                    Message = "Invalid product."
+                };
+            }
 
             else if (product.Stock == 0)
             {
                 return new Response<Product>
                 {
-                    Success = false,
-                    Message = "Out of stock."
+                    IsSuccess = false,
+                    Message = "Out of stock.",
+                    Data = product
                 };
             }
             try
@@ -62,7 +69,7 @@ namespace ShoppingCart.Services.Concrete
                 }
                 return new Response<Product>
                 {
-                    Success = true,
+                    IsSuccess = true,
                     Message = "Product successfully added to cart.",
                     Data = product
                 };
@@ -72,7 +79,7 @@ namespace ShoppingCart.Services.Concrete
             {
                 return new Response<Product>
                 {
-                    Success = false,
+                    IsSuccess = false,
                     Message = ex.Message
                 };
             }
