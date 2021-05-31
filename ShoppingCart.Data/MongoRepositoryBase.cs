@@ -26,8 +26,7 @@ namespace ShoppingCart.Data
         public async  Task<List<TEntity>> GetAllAsync()
         {
             return  await _collection.AsQueryable().ToListAsync();
-            //if (data != null)
-            //    result.Result = data;
+           
         }
 
         public async Task<TEntity> GetByIdAsync(string id)

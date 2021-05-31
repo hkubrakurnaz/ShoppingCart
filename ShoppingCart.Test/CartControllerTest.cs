@@ -34,10 +34,10 @@ namespace ShoppingCart.Test
                 }
             };
 
-            _cartService.Setup(x => x.InsertItem(id)).ReturnsAsync(response);
+            _cartService.Setup(x => x.AddProduct(id)).ReturnsAsync(response);
             var controller = new CartController(_cartService.Object);
 
-            var result = await controller.InsertItem(id);
+            var result = await controller.AddProduct(id);
 
             var actionResult = Assert.IsType<OkObjectResult>(result);
             var model = Assert.IsAssignableFrom <Response<Product>> (actionResult.Value);
@@ -60,10 +60,10 @@ namespace ShoppingCart.Test
 
             };
 
-            _cartService.Setup(x => x.InsertItem(id)).ReturnsAsync(response);
+            _cartService.Setup(x => x.AddProduct(id)).ReturnsAsync(response);
             var controller = new CartController(_cartService.Object);
 
-            var result = await controller.InsertItem(id);
+            var result = await controller.AddProduct(id);
 
             var actionResult = Assert.IsType<BadRequestObjectResult>(result);
             var model = Assert.IsAssignableFrom<Response<Product>>(actionResult.Value);
@@ -91,10 +91,10 @@ namespace ShoppingCart.Test
                 }
             };
 
-            _cartService.Setup(x => x.InsertItem(id)).ReturnsAsync(response);
+            _cartService.Setup(x => x.AddProduct(id)).ReturnsAsync(response);
             var controller = new CartController(_cartService.Object);
 
-            var result = await controller.InsertItem(id);
+            var result = await controller.AddProduct(id);
 
             var actionResult = Assert.IsType<BadRequestObjectResult>(result);
             var model = Assert.IsAssignableFrom<Response<Product>>(actionResult.Value);

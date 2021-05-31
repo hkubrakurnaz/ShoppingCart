@@ -12,7 +12,6 @@ namespace ShoppingCart.Entities.Abstract
     {
         [BsonRepresentation(BsonType.ObjectId)]
         [BsonId]
-        //[BsonElement(Order = 0)]
         public string Id { get; set; } 
     }
 }
